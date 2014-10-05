@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <title>Simple dotNet Tester</title>
+  </head>
+  <body>
+
+    <embed  id="plugin" 
+            type="application/x-detect-dotnet-plugin" 
+            width=0px 
+            height=0px>
+    </embed>
+    
+    <h1 id="title"></h1>
+    <hr>
+    <div id="messages"></div>
+
+    <script>
+      navigator.plugins.refresh(true);
+
+      function addMessage(message) {
+        var obj = document.createElement("div");
+        obj.innerText = message;
+        document.querySelector('#messages').appendChild(obj);
+      }
+      
+      function plugin() {
+        return document.querySelector('#plugin');
+      }
+      
+      if (plugin() == null) {
+        document.querySelector('#title').innerText = "Plugin couldn't be loaded??";
+        return;
+      } else {
+        document.querySelector('#title').innerText = "Plugin was loaded!";
+      }
+      
+		plugin().checkDotNet(function(status) {
+			addMessage("dotNet Status: " + status);
+		});
+		plugin().checkDotNet("4.5.2", function(status) {
+			addMessage("4.5.2: " + status);
+		});
+		plugin().checkDotNet("4.5.1", function(status) {
+			addMessage("4.5.1: " + status);
+		});
+		plugin().checkDotNet("4.5", function(status) {
+			addMessage("4.5: " + status);
+		});
+		plugin().checkDotNet("4.0", function(status) {
+			addMessage("4.0: " + status);
+		});
+
+    </script>
+
+  </body>
+</html>
