@@ -1,3 +1,6 @@
+# sdf: intellisense dbase
+*.sdf
+
 # Compiled Object files
 *.slo
 *.lo
