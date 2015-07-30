@@ -29,13 +29,14 @@
       
       if (plugin() == null) {
         document.querySelector('#title').innerText = "Plugin couldn't be loaded??";
-        return;
       } else {
         document.querySelector('#title').innerText = "Plugin was loaded!";
-      }
-      
+		
 		plugin().checkDotNet(function(status) {
 			addMessage("dotNet Status: " + status);
+		});
+		plugin().checkDotNet("4.6.0", function(status) {
+			addMessage("4.6.0: " + status);
 		});
 		plugin().checkDotNet("4.5.2", function(status) {
 			addMessage("4.5.2: " + status);
@@ -49,6 +50,9 @@
 		plugin().checkDotNet("4.0", function(status) {
 			addMessage("4.0: " + status);
 		});
+      }
+      
+		
 
     </script>
 

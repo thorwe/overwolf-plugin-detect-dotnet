@@ -68,6 +68,13 @@ namespace utils {
 	// Version information for final release of .NET Framework 4.5.2
 	const int g_dwNetfx452ReleaseVersion = 379893;
 
+	// Version information for RC of .NET Framework 4.6
+	const int g_dwNetfx460RCVersion = 393273;
+
+	// Version information for 4.6 Final
+	const int g_dwNetfx460ReleaseWin10Version = 393295;
+	const int g_dwNetfx460ReleaseWinBelow10Version = 393297;
+
 	// Function prototypes
 	bool CheckNetfxBuildNumber(const TCHAR*, const TCHAR*, const int, const int, const int, const int);
 	int GetNetfx10SPLevel();
@@ -83,6 +90,8 @@ namespace utils {
 	bool IsNetfx45Installed();
 	bool IsNetfx451Installed();
 	bool IsNetfx452Installed();
+	bool IsNetfx460RCInstalled();
+	bool IsNetfx460Installed();
 	bool RegistryGetValue(HKEY, const TCHAR*, const TCHAR*, DWORD, LPBYTE, DWORD);
 	int GetSPLevel(const std::wstring&);
 	int CheckDotNet();
@@ -342,6 +351,53 @@ namespace utils {
 		return bRetValue;
 	}
 
+	/******************************************************************
+	Function Name:	IsNetfx460RCInstalled
+	Description:	Uses the detection method recommended at
+	http://msdn.microsoft.com/en-us/library/ee942965(v=vs.110).aspx
+	to determine whether the .NET Framework 4.6 RC is
+	installed on the machine
+	Inputs:         NONE
+	Results:        true if the .NET Framework 4.6 RC is installed
+	false otherwise
+	******************************************************************/
+	bool IsNetfx460RCInstalled()
+	{
+		bool bRetValue = false;
+		DWORD dwRegValue = 0;
+
+		if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx45RegKeyName, g_szNetfx45RegValueName, NULL, (LPBYTE)&dwRegValue, sizeof(DWORD)))
+		{
+			if (g_dwNetfx460RCVersion <= dwRegValue)
+				bRetValue = true;
+		}
+
+		return bRetValue;
+	}
+
+	/******************************************************************
+	Function Name:	IsNetfx460Installed
+	Description:	Uses the detection method recommended at
+	http://msdn.microsoft.com/en-us/library/ee942965(v=vs.110).aspx
+	to determine whether the .NET Framework 4.6 is
+	installed on the machine
+	Inputs:         NONE
+	Results:        true if the .NET Framework 4.6 is installed
+	false otherwise
+	******************************************************************/
+	bool IsNetfx460Installed()
+	{
+		bool bRetValue = false;
+		DWORD dwRegValue = 0;
+
+		if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx45RegKeyName, g_szNetfx45RegValueName, NULL, (LPBYTE)&dwRegValue, sizeof(DWORD)))
+		{
+			if (g_dwNetfx460ReleaseWin10Version <= dwRegValue)
+				bRetValue = true;
+		}
+
+		return bRetValue;
+	}
 
 	/******************************************************************
 	Function Name:	GetNetfx10SPLevel
@@ -553,7 +609,10 @@ namespace utils {
 
 	int GetSPLevel(const std::wstring& dotNetVersion) {
 		int level = -1;
-		if (dotNetVersion == L"4.5.2") {
+		if (dotNetVersion == L"4.6.0") {
+			return GetNetfxSPLevel(g_szNetfx45RegKeyName, g_szNetfx40SPxRegValueName);
+		}
+		else if (dotNetVersion == L"4.5.2") {
 			return GetNetfxSPLevel(g_szNetfx45RegKeyName, g_szNetfx40SPxRegValueName);
 		}
 		else if (dotNetVersion == L"4.5.1") {
@@ -587,7 +646,13 @@ namespace utils {
 	}
 
 	int CheckDotNet() {
-		if (IsNetfx452Installed()) {
+		if (IsNetfx460Installed()) {
+			return 460;
+		}
+		else if (IsNetfx460RCInstalled()) {
+			return 459;
+		}
+		else if (IsNetfx452Installed()) {
 			return 452;
 		}
 		else if (IsNetfx451Installed()) {

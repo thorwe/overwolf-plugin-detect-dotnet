@@ -164,6 +164,9 @@ void nsScriptableObjectnpDetectDotNetPlugin::GetDotNetTask(
 	if (version.length() == 0) {
 		val = utils::CheckDotNet();
 	}
+	else if (version == "4.6.0") {
+		val = (int)utils::IsNetfx460Installed();
+	}
 	else if (version == "4.5.2") {
 		val = (int)utils::IsNetfx452Installed();
 	}
